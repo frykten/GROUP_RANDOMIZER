@@ -19,11 +19,11 @@
           <option value="group">Will Create Groups</option>
         </select>
         
-        <input type="text" placeholder="How many groups?" id="choice-input-nb-groups" class="choice-items" v-if="choiceSelected === 'group'">
+        <input type="text" placeholder="How many groups?" id="choice-input-nb-groups" class="choice-items" v-if="choiceSelected === 'group'" v-model="nbrGroups">
         
       </section>
       
-      <button id="choice-submit" @click="chooseRandom">Hit me, Jack!</button>
+      <button id="choice-submit" @click="startRandom">Hit me, Jack!</button>
     </div>
   </section>
 </template>
@@ -32,12 +32,52 @@
 export default {
   data () {
     return {
-      choiceSelected: ""
+      choiceSelected: "",
+      nbrGroups: null
+    }
+  },
+  computed: {
+    listArray() {
+      return this.$store.getters.list.split('\n')
     }
   },
   methods: {
-    chooseRandom: function() {
-      console.log(this.choiceSelected)
+    startRandom: function() {
+      if (this.choiceSelected === 'choose')
+        this.chooseRandomFromList();
+      else if (this.choiceSelected === 'pick')
+        this.pickRandomFromList();
+      else if (this.choiceSelected === 'group')
+        this.groupRandomlyFromTheList();
+      else
+        this.setResultToPrint('An error occured somewhere');
+    },
+    chooseRandomFromList: function() {
+      let chosenIndex = this.chooseIndex();
+      let chosenValue = this.listArray[chosenIndex];
+      
+      this.setResultToPrint(chosenValue)
+    },
+    pickRandomFromList: function() {
+      let chosenIndex = this.chooseIndex();
+      let chosenValue = this.listArray.splice(chosenIndex, 1);
+      
+      this.setResultToPrint(chosenValue)
+      this.setListToReprint()
+    },
+    groupRandomlyFromTheList: function() {
+      this.setResultToPrint("Haha! Still some coding to do")
+    },
+    chooseIndex: function() {
+      let randomNumber = Math.random();
+      let maxIndex = this.listArray.length;
+      return Math.floor(randomNumber * maxIndex);
+    },
+    setResultToPrint: function(resultToPrint) {
+      this.$store.commit('setResultToPrint', resultToPrint)
+    },
+    setListToReprint: function() {
+      this.$store.commit('setList', this.listArray.join('\n'))
     }
   }
 }

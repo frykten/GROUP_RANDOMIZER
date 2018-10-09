@@ -7,7 +7,7 @@
       </header>
 
       <section id="panel">
-        <p></p>
+        <textarea id="list-placeholder" placeholder="Result will be here" v-model="listToPrint"></textarea>
       </section>
       
     </div>
@@ -18,6 +18,11 @@
 export default {
   data () {
     return {
+    }
+  },
+  computed: {
+    listToPrint() {
+      return this.$store.getters.resultToPrint
     }
   }
 }
@@ -33,13 +38,26 @@ export default {
   }
   
   #panel {
-    background: #fefefb;
-    border: solid 1px beige;
+    background: beige;
     border-radius: 6px;
     box-shadow: -1px 2px 2px rgba(20, 20, 20, .1), -1px 2px 6px rgba(20, 20, 20, .2);
     height: 60vh;
+    min-width: 400px;
     overflow-x: hidden;
     overflow-y: auto;
     width: 400px;
+  }
+  
+  #list-placeholder {
+    background: rgba(255, 255, 255, .9);
+    border: 0;
+    border-radius: 6px;
+    font-size: .8rem;
+    height: 99%;
+    line-height: 1.6rem;
+    overflow-y: auto;
+    padding: 1rem;
+    resize: none;
+    width: 99%;
   }
 </style>

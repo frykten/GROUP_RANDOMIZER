@@ -7,7 +7,7 @@
       </header>
 
       <section id="panel">
-        <textarea id="list-placeholder">Enter your list here</textarea>
+        <textarea id="list-placeholder" placeholder="Enter your list here" v-model="listFromTextArea">Enter your list here</textarea>
       </section>
       
     </div>
@@ -18,6 +18,20 @@
 export default {
   data () {
     return {
+      listFromTextArea: null
+    }
+  },
+  computed: {
+    listWithRemovals() {
+      return this.$store.getters.list
+    }
+  },
+  watch: {
+    listFromTextArea() {
+      this.$store.commit('setList', this.listFromTextArea)
+    },
+    listWithRemovals() {
+      this.listFromTextArea = this.listWithRemovals
     }
   }
 }
