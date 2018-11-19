@@ -11,7 +11,7 @@
         <div id="arrow"></div>
       </section>
       
-      <section id="choice">
+      <section id="choice" :class="choiceSelected">
         <select name="choice" id="choice-select" class="choice-items" v-model="choiceSelected">
           <option value="" disabled selected>-- What will your choice be? --</option>
           <option value="choose">Will Choose a Random one</option>
@@ -38,46 +38,70 @@ export default {
   },
   computed: {
     listArray() {
-      return this.$store.getters.list.split('\n')
+      let listToReturn, list = this.$store.getters.list;
+      if (list == '')
+        listToReturn = [];
+      else 
+        listToReturn = list.split('\n');
+      
+      return listToReturn;
     }
   },
   methods: {
     startRandom: function() {
-      if (this.choiceSelected === 'choose')
-        this.chooseRandomFromList();
-      else if (this.choiceSelected === 'pick')
-        this.pickRandomFromList();
-      else if (this.choiceSelected === 'group')
-        this.groupRandomlyFromTheList();
-      else
-        this.setResultToPrint('An error occured somewhere');
+      try {
+        if (this.choiceSelected === 'choose')
+          this.chooseRandomFromList();
+        else if (this.choiceSelected === 'pick')
+          this.pickRandomFromList();
+        else if (this.choiceSelected === 'group')
+          this.groupRandomlyFromTheList();
+        else
+          throw 'An error occured somewhere'
+      } catch (e) {
+        this.setResultToPrint(e);
+        this.setErrorState(true);
+      }
     },
     chooseRandomFromList: function() {
-      let chosenIndex = this.chooseIndex();
+      if (this.listArray.length == 0 || this.listArray[0] == '')
+        throw 'List is void'
+      let chosenIndex = this.chooseRandomIndex();
       let chosenValue = this.listArray[chosenIndex];
       
-      this.setResultToPrint(chosenValue)
+      this.setResultToPrint(chosenValue);
+      this.setErrorState(false);
     },
     pickRandomFromList: function() {
-      let chosenIndex = this.chooseIndex();
+      if (this.listArray.length == 0 || this.listArray[0] == '')
+        throw 'List is void'
+      let chosenIndex = this.chooseRandomIndex();
       let chosenValue = this.listArray.splice(chosenIndex, 1);
       
-      this.setResultToPrint(chosenValue)
-      this.setListToReprint()
+      this.setResultToPrint(chosenValue);
+      this.setListToReprint(chosenValue);
+      this.setErrorState(false);
     },
     groupRandomlyFromTheList: function() {
-      this.setResultToPrint("Haha! Still some coding to do")
+      this.setResultToPrint('Haha! Still some coding to do');
+      this.setErrorState(true);
     },
-    chooseIndex: function() {
+    chooseRandomIndex: function() {
       let randomNumber = Math.random();
       let maxIndex = this.listArray.length;
       return Math.floor(randomNumber * maxIndex);
     },
     setResultToPrint: function(resultToPrint) {
-      this.$store.commit('setResultToPrint', resultToPrint)
+      this.$store.commit('setResultToPrint', resultToPrint);
     },
-    setListToReprint: function() {
-      this.$store.commit('setList', this.listArray.join('\n'))
+    setListToReprint: function(chosenValue) {
+      if (chosenValue)
+        this.$store.commit('setList', this.listArray.join('\n'));
+      else
+        this.$store.commit('setList', []);
+    },
+    setErrorState: function(isError) {
+      this.$store.commit('setErrorState', !!isError);
     }
   }
 }
@@ -110,7 +134,7 @@ export default {
     width: 80%;
   }
   
-  #choice {
+  #choice.group {
     display: grid;
 /*    grid-column-gap: 10%;*/
     grid-template-columns: repeat(2, 1fr);

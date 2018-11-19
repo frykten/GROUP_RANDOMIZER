@@ -6,8 +6,8 @@
         <h3>Here Goes Results</h3>
       </header>
 
-      <section id="panel">
-        <textarea id="list-placeholder" placeholder="Result will be here" v-model="listToPrint"></textarea>
+      <section id="panel" :class="isError ? 'error' : ''">
+        <textarea id="list-placeholder" :class="isError ? 'error' : ''" placeholder="Result will be here" v-model="listToPrint"></textarea>
       </section>
       
     </div>
@@ -23,8 +23,11 @@ export default {
   computed: {
     listToPrint() {
       return this.$store.getters.resultToPrint
+    },
+    isError() {
+      return this.$store.getters.isError
     }
-  }
+  },
 }
 </script>
 
@@ -59,5 +62,13 @@ export default {
     padding: 1rem;
     resize: none;
     width: 99%;
+  }
+  
+  #panel.error {
+    background: #ff583a;
+  }
+  
+  #list-placeholder.error {
+    background: rgba(255, 242, 242, 0.9);
   }
 </style>

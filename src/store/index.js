@@ -7,25 +7,29 @@ export default new Vuex.Store({
   state: {
     list: null,
     resultToPrint: null,
-    array: null
+    array: null,
+    isError: false
   },
   getters: {
     list: state => state.list,
     resultToPrint: state => state.resultToPrint,
-    array: state => state.array
+    array: state => state.array,
+    isError: state => state.isError
   },
   mutations: {
     setList(state, newList) {
-      console.warn("Here's the VUEX")
-      
       state.list = newList
-      console.warn(state.list)
+//      console.log(state.list)
+//      console.log(newList)
     },
     setResultToPrint(state, newResultToPrint) {
       state.resultToPrint = newResultToPrint
     },
     setArray(state, newArray) {
       state.array = newArray
+    },
+    setErrorState(state, newErrorState) {
+      state.isError = newErrorState
     }
   }
 })
